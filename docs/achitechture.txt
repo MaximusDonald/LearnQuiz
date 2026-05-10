@@ -1,0 +1,62 @@
+learnquiz/
+├── frontend/                  # React + Vite + TypeScript
+│   ├── src/
+│   │   ├── components/        # Composants réutilisables
+│   │   ├── pages/             # Pages principales
+│   │   ├── hooks/             # Custom hooks
+│   │   ├── services/          # Appels API (axios)
+│   │   ├── store/             # État global (Zustand)
+│   │   └── types/             # Types TypeScript
+│   └── ...
+│
+├── backend/                   # FastAPI + Python
+│   ├── app/
+│   │   ├── api/               # Routes FastAPI (routers)
+│   │   │   ├── auth.py
+│   │   │   ├── courses.py
+│   │   │   ├── quiz.py
+│   │   │   ├── tutor.py
+│   │   │   └── progress.py
+│   │   ├── core/              # Config, sécurité, DB
+│   │   │   ├── config.py
+│   │   │   ├── security.py
+│   │   │   └── database.py
+│   │   ├── models/            # Modèles SQLAlchemy
+│   │   ├── schemas/           # Schémas Pydantic
+│   │   ├── services/          # Logique métier
+│   │   │   ├── gemini.py      # Intégration Gemini API
+│   │   │   ├── parser.py      # Extraction PDF/MD/TXT
+│   │   │   └── quiz_engine.py
+│   │   └── main.py
+│   ├── alembic/               # Migrations DB
+│   └── tests/
+│
+├── .agent/                    # Config Antigravity
+│   ├── rules/
+│   │   ├── global.md
+│   │   ├── backend.md
+│   │   └── frontend.md
+│   └── skills/
+│       ├── gemini-integration/
+│       ├── fastapi-patterns/
+│       └── react-patterns/
+│
+├── .env.example
+├── docker-compose.yml         # Pour dev local (optionnel)
+└── AGENTS.md                  # Fichier de contexte principal
+
+
+
+
+** Flux principal du système **
+
+Utilisateur → React (upload cours)
+           → FastAPI (réception fichier)
+           → Parser Service (extraction texte)
+           → Gemini API (génération quiz/résumé)
+           → PostgreSQL (stockage)
+           → React (affichage quiz/résumé)
+           → Utilisateur (répond au quiz)
+           → FastAPI (évaluation réponses)
+           → Gemini API (analyse erreurs + explication)
+           → React (feedback pédagogique)
