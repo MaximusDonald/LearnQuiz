@@ -22,7 +22,7 @@ backend/alembic/versions/*.pyc
 # agents
 agents/*.pyc
 .agents/
-Agents.md
+AGENTS.md
 
 # Node
 node_modules/
