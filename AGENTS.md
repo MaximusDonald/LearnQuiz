@@ -8,7 +8,7 @@ de progression.
 ## Stack technique
 - Frontend : React 18 + TypeScript + Vite + Zustand + React Router v6
 - Backend : FastAPI (Python 3.11) + SQLAlchemy 2.0 + Alembic
-- Base de données : PostgreSQL (Neon)
+- Base de données : PostgreSQL (Aiven)
 - IA : Google Gemini API (gemini-1.5-pro pour quiz/résumé, gemini-1.5-flash pour Q&A)
 - Auth : JWT (email/password) + Google OAuth 2.0
 

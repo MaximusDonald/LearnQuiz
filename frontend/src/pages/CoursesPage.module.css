@@ -1,0 +1,145 @@
+.page {
+  min-height: 100svh;
+  padding: 32px 20px 48px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 202, 101, 0.22), transparent 28%),
+    linear-gradient(180deg, #fffbf3 0%, #f9fbff 100%);
+}
+
+.header {
+  width: min(100%, 1120px);
+  margin: 0 auto 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: end;
+}
+
+.header h1 {
+  margin: 8px 0 10px;
+  font-size: clamp(2rem, 5vw, 3.3rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.header p {
+  margin: 0;
+  color: #5e6475;
+}
+
+.kicker {
+  display: inline-flex;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(243, 151, 53, 0.14);
+  color: #aa5715;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.backLink {
+  color: #28344d;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.grid {
+  width: min(100%, 1120px);
+  margin: 24px auto 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(24, 32, 56, 0.08);
+  box-shadow: 0 18px 48px rgba(18, 24, 39, 0.08);
+}
+
+.card h2 {
+  margin: 14px 0 8px;
+  color: #1f2335;
+}
+
+.card p {
+  margin: 0;
+  color: #5e6475;
+}
+
+.cardHeader,
+.cardMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.cardMeta {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: #6d7286;
+  flex-wrap: wrap;
+}
+
+.statusBadge {
+  display: inline-flex;
+  padding: 0.38rem 0.68rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ready {
+  background: rgba(46, 174, 96, 0.14);
+  color: #1d8751;
+}
+
+.processing {
+  background: rgba(255, 184, 70, 0.18);
+  color: #b06b0f;
+}
+
+.errorStatus {
+  background: rgba(219, 84, 84, 0.14);
+  color: #b34a4a;
+}
+
+.detailLink {
+  display: inline-flex;
+  margin-top: 20px;
+  color: #1f2335;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.deleteButton {
+  border: none;
+  background: transparent;
+  color: #8f4550;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.emptyState,
+.error {
+  width: min(100%, 1120px);
+  margin: 24px auto 0;
+}
+
+.error {
+  color: #b84a4a;
+}
+
+@media (max-width: 720px) {
+  .header {
+    flex-direction: column;
+    align-items: start;
+  }
+}

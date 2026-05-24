@@ -1,0 +1,60 @@
+.card {
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(24, 32, 56, 0.08);
+  box-shadow: 0 18px 48px rgba(18, 24, 39, 0.08);
+  padding: 28px;
+}
+
+.card h2 {
+  margin: 0 0 20px;
+  color: #1e2233;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  line-height: 1.2;
+}
+
+.options {
+  display: grid;
+  gap: 12px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: #fff8ee;
+  border: 1px solid rgba(243, 151, 53, 0.12);
+}
+
+.textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(31, 35, 53, 0.12);
+  border-radius: 18px;
+  padding: 14px 16px;
+  font: inherit;
+  resize: vertical;
+  min-height: 140px;
+}
+
+.actions {
+  margin-top: 20px;
+}
+
+.submitButton {
+  border: none;
+  border-radius: 16px;
+  padding: 0.95rem 1.15rem;
+  background: linear-gradient(135deg, #ffd06b 0%, #ff9248 100%);
+  color: #251d12;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.submitButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

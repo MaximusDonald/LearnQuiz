@@ -1,0 +1,252 @@
+.page {
+  min-height: 100svh;
+  padding: 32px 20px 48px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 192, 102, 0.18), transparent 28%),
+    linear-gradient(180deg, #fffdf7 0%, #f7fbff 100%);
+}
+
+.layout {
+  width: min(100%, 1240px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 20px;
+}
+
+.backLink {
+  display: block;
+  width: min(100%, 1240px);
+  margin: 0 auto 20px;
+  color: #28344d;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.card {
+  padding: 32px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(24, 32, 56, 0.08);
+  box-shadow: 0 18px 48px rgba(18, 24, 39, 0.08);
+}
+
+.heading h1 {
+  margin: 10px 0;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.heading p,
+.meta {
+  color: #5e6475;
+}
+
+.kicker {
+  display: inline-flex;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(243, 151, 53, 0.14);
+  color: #aa5715;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 16px;
+}
+
+.actions {
+  margin-top: 24px;
+}
+
+.generateButton {
+  border: none;
+  border-radius: 16px;
+  padding: 0.95rem 1.15rem;
+  background: linear-gradient(135deg, #ffd06b 0%, #ff9248 100%);
+  color: #251d12;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.generateButton:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.progressPanel,
+.summaryPanel,
+.textPanel,
+.quizPanel {
+  margin-top: 28px;
+}
+
+.progressPanel h2,
+.textPanel h2,
+.summaryPanel h2,
+.quizPanel h2 {
+  margin-bottom: 12px;
+}
+
+.progressStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.progressStats article {
+  padding: 18px;
+  border-radius: 20px;
+  background: #f7fbff;
+  border: 1px solid rgba(24, 32, 56, 0.08);
+}
+
+.progressStats span {
+  display: block;
+  color: #6a7184;
+  font-size: 0.9rem;
+}
+
+.progressStats strong {
+  display: block;
+  margin-top: 6px;
+  color: #182038;
+  font-size: 1.5rem;
+}
+
+.topicList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.topicChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 0.85rem;
+  border-radius: 999px;
+  background: #eef5ff;
+  color: #20406d;
+  font-weight: 700;
+}
+
+.textPanel pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border-radius: 20px;
+  background: #151926;
+  color: #f5f4ee;
+  padding: 20px;
+  line-height: 1.65;
+  overflow-x: auto;
+}
+
+.quizList {
+  display: grid;
+  gap: 14px;
+}
+
+.quizCard {
+  border-radius: 20px;
+  border: 1px solid rgba(24, 32, 56, 0.08);
+  background: #fff8ee;
+  padding: 18px;
+}
+
+.quizCard h3 {
+  margin: 0 0 8px;
+}
+
+.quizCard p {
+  margin: 0 0 4px;
+  color: #5e6475;
+}
+
+.startQuizLink {
+  display: inline-flex;
+  margin-top: 12px;
+  color: #1f2335;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.placeholder {
+  color: #6a7184;
+}
+
+.sidebar {
+  display: grid;
+  align-content: start;
+}
+
+.sidebarCard {
+  position: sticky;
+  top: 24px;
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(24, 32, 56, 0.08);
+  box-shadow: 0 18px 48px rgba(18, 24, 39, 0.08);
+}
+
+.sidebarCard h2 {
+  margin: 10px 0 14px;
+  color: #1f2335;
+}
+
+.relationList {
+  display: grid;
+  gap: 12px;
+}
+
+.relationCard {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border-radius: 18px;
+  background: #fff9ef;
+  border: 1px solid rgba(255, 169, 91, 0.18);
+  color: #28344d;
+  text-decoration: none;
+}
+
+.relationCard span {
+  color: #5e6475;
+  font-size: 0.92rem;
+}
+
+.message,
+.error {
+  width: min(100%, 1240px);
+  margin: 12px auto 0;
+}
+
+.error {
+  color: #b84a4a;
+}
+
+@media (max-width: 1040px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebarCard {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .progressStats {
+    grid-template-columns: 1fr;
+  }
+}

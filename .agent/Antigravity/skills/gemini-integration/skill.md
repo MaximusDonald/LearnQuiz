@@ -6,21 +6,62 @@ de l'IA, ou modifier `services/gemini.py`.
 
 ## Pattern standard d'appel Gemini
 ```python
-import google.generativeai as genai
+from google import genai
+from google.genai import types
+
+from fastapi import HTTPException
 from app.core.config import settings
 
-genai.configure(api_key=settings.GEMINI_API_KEY)
+import json
+import re
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Initialisation du client
+client = genai.Client(api_key=settings.GEMINI_API_KEY)
+
+
+def parse_json_response(text: str) -> dict:
+    """
+    Nettoie et parse une réponse JSON générée par Gemini
+    """
+    clean = re.sub(r"```json|```", "", text).strip()
+    return json.loads(clean)
+
+
+PROMPTS = {
+    "my_task": """
+    Analyse le texte suivant et retourne uniquement un JSON valide.
+
+    Texte :
+    {text}
+    """
+}
+
 
 async def generate_something(text: str) -> dict:
-    model = genai.GenerativeModel("gemini-1.5-pro")
     prompt = PROMPTS["my_task"].format(text=text)
-    
+
     try:
-        response = await model.generate_content_async(prompt)
+        response = await client.aio.models.generate_content(
+            model="gemini-2.5-pro",
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                temperature=0.2,
+                response_mime_type="application/json",
+            ),
+        )
+
         return parse_json_response(response.text)
+
     except Exception as e:
         logger.error(f"Gemini error: {e}")
-        raise HTTPException(status_code=502, detail="Erreur service IA")
+
+        raise HTTPException(
+            status_code=502,
+            detail="Erreur service IA"
+        )
 ```
 
 ## Gestion du JSON malformé

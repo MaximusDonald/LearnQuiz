@@ -1,0 +1,82 @@
+.page {
+  min-height: 100svh;
+  display: grid;
+  gap: 20px;
+  align-content: start;
+  padding: 32px 20px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 160, 67, 0.18), transparent 30%),
+    linear-gradient(180deg, #fffaf0 0%, #f9fbff 100%);
+}
+
+.card {
+  width: min(100%, 720px);
+  margin: 0 auto;
+  padding: 36px;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(24, 32, 56, 0.08);
+  box-shadow: 0 24px 64px rgba(18, 24, 39, 0.12);
+}
+
+.card h1 {
+  margin: 10px 0 14px;
+  color: #1e2233;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.07em;
+}
+
+.card p {
+  color: #5e6475;
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+.kicker {
+  display: inline-flex;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 161, 66, 0.16);
+  color: #a34c1b;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 160px;
+  padding: 0.95rem 1.15rem;
+  border-radius: 16px;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primaryAction {
+  background: #1f2335;
+  color: #fffaf0;
+}
+
+.secondaryAction {
+  border: 1px solid rgba(32, 38, 58, 0.16);
+  background: #ffffff;
+  color: #26304a;
+}
+
+.secondaryAction:where(a) {
+  text-decoration: none;
+}

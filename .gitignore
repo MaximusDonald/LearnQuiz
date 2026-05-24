@@ -19,6 +19,11 @@ env/
 # Alembic
 backend/alembic/versions/*.pyc
 
+# agents
+agents/*.pyc
+.agents/
+Agents.md
+
 # Node
 node_modules/
 frontend/dist/

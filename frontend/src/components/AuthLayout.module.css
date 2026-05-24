@@ -1,0 +1,125 @@
+.page {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  background:
+    radial-gradient(circle at top left, rgba(245, 122, 63, 0.22), transparent 36%),
+    linear-gradient(135deg, #fff6ea 0%, #fffdf8 55%, #f7fbff 100%);
+}
+
+.heroPanel {
+  padding: 72px 64px;
+  color: #1b1b26;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+}
+
+.heroPanel h1 {
+  margin: 0;
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+  line-height: 0.94;
+  letter-spacing: -0.08em;
+  max-width: 10ch;
+}
+
+.heroPanel p {
+  max-width: 34rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #584f55;
+}
+
+.heroBadge {
+  width: fit-content;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(17, 25, 40, 0.08);
+  color: #26293a;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.heroGrid article {
+  padding: 20px;
+  border: 1px solid rgba(25, 31, 52, 0.09);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.heroGrid span {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #d66832;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.heroGrid strong {
+  display: block;
+  color: #232536;
+  line-height: 1.45;
+}
+
+.formPanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.formCard {
+  width: min(100%, 460px);
+  padding: 36px;
+  border-radius: 32px;
+  background: rgba(18, 20, 31, 0.96);
+  color: #f8f7f3;
+  box-shadow: 0 30px 80px rgba(21, 24, 39, 0.16);
+}
+
+.footerText {
+  margin: 24px 0 0;
+  color: #b3b8c7;
+  text-align: center;
+}
+
+.footerText a {
+  color: #ffd06b;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (max-width: 960px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .heroPanel {
+    padding: 44px 24px 12px;
+  }
+
+  .heroGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formPanel {
+    padding: 24px;
+  }
+
+  .formCard {
+    padding: 28px 20px;
+  }
+}

@@ -1,0 +1,100 @@
+.chatPanel {
+  margin-top: 28px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(24, 32, 56, 0.08);
+  box-shadow: 0 18px 48px rgba(18, 24, 39, 0.08);
+  padding: 24px;
+}
+
+.header h2 {
+  margin: 0 0 8px;
+}
+
+.header p {
+  margin: 0;
+  color: #5e6475;
+}
+
+.messages {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.messageBubble {
+  max-width: 85%;
+  padding: 14px 16px;
+  border-radius: 20px;
+}
+
+.userBubble {
+  margin-left: auto;
+  background: #1f2335;
+  color: #fff7ef;
+}
+
+.assistantBubble {
+  margin-right: auto;
+  background: #fff8ee;
+  color: #24314a;
+  border: 1px solid rgba(243, 151, 53, 0.14);
+}
+
+.messageRole {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.messageBubble p {
+  margin: 0;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.placeholder {
+  color: #6a7184;
+  margin: 0;
+}
+
+.composer {
+  margin-top: 20px;
+  display: grid;
+  gap: 12px;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(31, 35, 53, 0.12);
+  border-radius: 18px;
+  padding: 14px 16px;
+  font: inherit;
+  resize: vertical;
+}
+
+.sendButton {
+  justify-self: end;
+  border: none;
+  border-radius: 16px;
+  padding: 0.95rem 1.15rem;
+  background: linear-gradient(135deg, #ffd06b 0%, #ff9248 100%);
+  color: #251d12;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.sendButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.error {
+  margin: 12px 0 0;
+  color: #b84a4a;
+}

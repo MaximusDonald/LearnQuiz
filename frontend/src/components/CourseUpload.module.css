@@ -1,0 +1,54 @@
+.wrapper {
+  display: grid;
+  gap: 12px;
+}
+
+.dropzone {
+  width: 100%;
+  display: grid;
+  gap: 8px;
+  padding: 28px;
+  border: 2px dashed rgba(42, 54, 96, 0.18);
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(255, 208, 107, 0.18), rgba(255, 255, 255, 0.9)),
+    #ffffff;
+  color: #1f2335;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropzone strong {
+  font-size: 1.2rem;
+}
+
+.dropzone p {
+  margin: 0;
+  color: #5e6475;
+}
+
+.active {
+  border-color: #f0892b;
+  transform: translateY(-1px);
+}
+
+.badge {
+  width: fit-content;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(240, 137, 43, 0.14);
+  color: #9c4d0e;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.input {
+  display: none;
+}
+
+.error {
+  margin: 0;
+  color: #bf4a4a;
+}

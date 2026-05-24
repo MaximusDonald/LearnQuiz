@@ -10,6 +10,7 @@
 - Ne supprime jamais de code sans confirmation explicite
 - Pour chaque tâche complexe, génère d'abord un plan (artifact) avant d'écrire du code
 - Si une décision architecturale a plusieurs options, présente-les avec leurs compromis
+- Ne fait pas plus que ce qui est demandé sans accord explicite
 - Après chaque phase, génère un résumé de ce qui a été fait
 
 ## Qualité du code

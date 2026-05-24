@@ -31,19 +31,8 @@ learnquiz/
 │   ├── alembic/               # Migrations DB
 │   └── tests/
 │
-├── .agent/                    # Config Antigravity
-│   ├── rules/
-│   │   ├── global.md
-│   │   ├── backend.md
-│   │   └── frontend.md
-│   └── skills/
-│       ├── gemini-integration/
-│       ├── fastapi-patterns/
-│       └── react-patterns/
-│
 ├── .env.example
 ├── docker-compose.yml         # Pour dev local (optionnel)
-└── AGENTS.md                  # Fichier de contexte principal
 
 
 

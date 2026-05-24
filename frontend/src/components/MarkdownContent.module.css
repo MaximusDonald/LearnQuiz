@@ -1,0 +1,42 @@
+.content {
+  color: #24314a;
+}
+
+.content h1,
+.content h2,
+.content h3 {
+  color: #1e2233;
+  margin: 0 0 12px;
+  letter-spacing: -0.04em;
+}
+
+.content h1 {
+  font-size: 1.7rem;
+}
+
+.content h2 {
+  font-size: 1.35rem;
+  margin-top: 16px;
+}
+
+.content h3 {
+  font-size: 1.05rem;
+  margin-top: 14px;
+}
+
+.content p {
+  margin: 0 0 12px;
+  line-height: 1.75;
+  color: #5e6475;
+}
+
+.content ul {
+  margin: 0 0 14px;
+  padding-left: 20px;
+  color: #384154;
+}
+
+.content li {
+  margin-bottom: 8px;
+  line-height: 1.7;
+}

@@ -1,0 +1,81 @@
+.page {
+  min-height: 100svh;
+  padding: 32px 20px 48px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 205, 116, 0.18), transparent 28%),
+    linear-gradient(180deg, #fffdf7 0%, #f7fbff 100%);
+}
+
+.header,
+.layout,
+.message,
+.error {
+  width: min(100%, 960px);
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.backLink {
+  color: #28344d;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.kicker {
+  display: inline-flex;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(243, 151, 53, 0.14);
+  color: #aa5715;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.layout {
+  display: grid;
+  gap: 18px;
+}
+
+.progressCard {
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(24, 32, 56, 0.08);
+  box-shadow: 0 18px 48px rgba(18, 24, 39, 0.08);
+  padding: 20px 24px;
+}
+
+.progressCard p {
+  margin: 0 0 12px;
+  color: #4d566f;
+  font-weight: 700;
+}
+
+.progressBar {
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: #eceef4;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(135deg, #ffd06b 0%, #ff9248 100%);
+}
+
+.message,
+.error {
+  margin-top: 12px;
+}
+
+.error {
+  color: #b84a4a;
+}
