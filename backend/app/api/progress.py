@@ -55,7 +55,11 @@ async def get_global_progress(
         .options(selectinload(QuizSession.quiz))
         .join(QuizSession.quiz)
         .join(Quiz.course)
-        .where(QuizSession.user_id == current_user.id, Course.user_id == current_user.id)
+        .where(
+            QuizSession.user_id == current_user.id,
+            Course.user_id == current_user.id,
+            QuizSession.completed_at.is_not(None),  # Exclude abandoned/in-progress sessions
+        )
         .order_by(QuizSession.completed_at.desc().nullslast(), QuizSession.started_at.desc())
     )
     sessions = (await session.execute(sessions_query)).scalars().all()
@@ -142,12 +146,21 @@ async def get_course_progress(
     score_history_query = (
         select(QuizSession)
         .join(QuizSession.quiz)
-        .where(QuizSession.user_id == current_user.id, Quiz.course_id == course_id)
+        .where(
+            QuizSession.user_id == current_user.id,
+            Quiz.course_id == course_id,
+            QuizSession.completed_at.is_not(None),  # Only count completed sessions
+        )
         .order_by(QuizSession.completed_at.asc().nullslast(), QuizSession.started_at.asc())
     )
     session_items = (await session.execute(score_history_query)).scalars().all()
 
-    total_sessions = course_progress.total_sessions if course_progress else len(session_items)
+    # Always derive total_sessions from completed sessions in DB for consistency.
+    total_sessions = len(session_items)
+    if course_progress is not None and course_progress.total_sessions != total_sessions:
+        # Self-heal: keep CourseProgress.total_sessions in sync with reality.
+        course_progress.total_sessions = total_sessions
+        await session.commit()
     average_score = (
         sum(item.score or 0.0 for item in session_items) / len(session_items)
         if session_items

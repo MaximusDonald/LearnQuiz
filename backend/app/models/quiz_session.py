@@ -2,12 +2,26 @@
 
 import uuid
 from datetime import datetime
+from enum import Enum
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Text, UUID
+from sqlalchemy import Boolean, DateTime, Enum as SqlEnum, Float, ForeignKey, Text, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
 from app.models.mixins import TimestampMixin, UUIDPrimaryKey
+
+
+def enum_values(enum_class: type[Enum]) -> list[str]:
+    """Return SQL enum values from a Python Enum class."""
+
+    return [member.value for member in enum_class]
+
+
+class SessionStatus(str, Enum):
+    """Lifecycle status of a quiz session."""
+
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
 
 
 class QuizSession(UUIDPrimaryKey, TimestampMixin, Base):
@@ -36,6 +50,16 @@ class QuizSession(UUIDPrimaryKey, TimestampMixin, Base):
         nullable=True,
     )
     score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    status: Mapped[SessionStatus] = mapped_column(
+        SqlEnum(
+            SessionStatus,
+            name="session_status",
+            values_callable=enum_values,
+        ),
+        nullable=False,
+        default=SessionStatus.IN_PROGRESS,
+        server_default=SessionStatus.IN_PROGRESS.value,
+    )
 
     user: Mapped["User"] = relationship("User", back_populates="quiz_sessions")
     quiz: Mapped["Quiz"] = relationship("Quiz", back_populates="sessions")

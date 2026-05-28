@@ -10,6 +10,7 @@ export interface QuizSessionCreateResponse {
   session_id: string
   quiz_id: string
   questions: SessionQuestion[]
+  already_answered_ids: string[]
 }
 
 export interface SubmitAnswerResponse {

@@ -21,6 +21,7 @@ export function QuizPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isResumed, setIsResumed] = useState(false)
 
   useEffect(() => {
     async function startQuizSession() {
@@ -34,6 +35,23 @@ export function QuizPage() {
         const response = await createQuizSessionRequest(quizId)
         setSessionId(response.session_id)
         setQuestions(response.questions)
+
+        // If resuming, skip to the first unanswered question.
+        if (response.already_answered_ids.length > 0) {
+          setIsResumed(true)
+          const answeredSet = new Set(response.already_answered_ids)
+          const firstUnansweredIndex = response.questions.findIndex(
+            (q) => !answeredSet.has(q.id)
+          )
+          if (firstUnansweredIndex !== -1) {
+            setCurrentIndex(firstUnansweredIndex)
+          } else {
+            // All questions already answered: complete the session directly.
+            await completeQuizSessionRequest(response.session_id)
+            navigate(`/quiz/${response.session_id}/results`, { replace: true })
+            return
+          }
+        }
       } catch (err) {
         const axiosError = err as AxiosError<{ detail?: string }>
         setError(
@@ -77,7 +95,7 @@ export function QuizPage() {
       const axiosError = err as AxiosError<{ detail?: string }>
       setError(
         axiosError.response?.data?.detail ??
-          'Impossible d’enregistrer cette réponse.',
+          "Impossible d'enregistrer cette réponse",
       )
     } finally {
       setIsSubmitting(false)
@@ -95,6 +113,11 @@ export function QuizPage() {
 
       {isLoading ? <p className={styles.message}>Préparation du quiz...</p> : null}
       {error ? <p className={styles.error}>{error}</p> : null}
+      {isResumed && !isLoading ? (
+        <p className={styles.message}>
+          Session reprise — vous avez déjà répondu à quelques questions.
+        </p>
+      ) : null}
 
       {!isLoading && currentQuestion ? (
         <div className={styles.layout}>

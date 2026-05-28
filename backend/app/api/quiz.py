@@ -13,7 +13,7 @@ from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models.progress import CourseProgress
 from app.models.quiz import Question, QuestionType, Quiz
-from app.models.quiz_session import QuizSession, UserAnswer
+from app.models.quiz_session import QuizSession, SessionStatus, UserAnswer
 from app.models.user import User
 from app.schemas.quiz_session import (
     CompleteQuizSessionResponse,
@@ -165,13 +165,50 @@ async def create_quiz_session(
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> QuizSessionCreateResponse:
-    """Create a new session for a quiz owned by the current user."""
+    """Create (or resume) a session for a quiz owned by the current user.
+
+    If an in-progress session already exists for this (user, quiz) pair, the
+    existing session is returned so the learner can resume without creating
+    phantom sessions or inflating attempt counters.
+    """
 
     quiz = await get_owned_quiz_or_404(payload.quiz_id, current_user.id, session)
+
+    # Check for an existing in-progress session to avoid phantom sessions.
+    existing_query = (
+        select(QuizSession)
+        .options(
+            selectinload(QuizSession.quiz).selectinload(Quiz.questions),
+            selectinload(QuizSession.answers),
+        )
+        .where(
+            QuizSession.user_id == current_user.id,
+            QuizSession.quiz_id == quiz.id,
+            QuizSession.status == SessionStatus.IN_PROGRESS,
+        )
+    )
+    existing_result = await session.execute(existing_query)
+    existing_session = existing_result.scalar_one_or_none()
+
+    if existing_session is not None:
+        # Resume the existing session: return already-answered question IDs so
+        # the frontend can skip ahead to the first unanswered question.
+        ordered_questions = sorted(existing_session.quiz.questions, key=lambda item: item.order_index)
+        answered_ids = {a.question_id for a in existing_session.answers}
+        return QuizSessionCreateResponse(
+            session_id=existing_session.id,
+            quiz_id=quiz.id,
+            questions=[
+                SessionQuestionResponse.model_validate(q) for q in ordered_questions
+            ],
+            already_answered_ids=list(answered_ids),
+        )
+
     quiz_session = QuizSession(
         user_id=current_user.id,
         quiz_id=quiz.id,
         started_at=datetime.now(timezone.utc),
+        status=SessionStatus.IN_PROGRESS,
     )
     session.add(quiz_session)
     await session.commit()
@@ -182,6 +219,7 @@ async def create_quiz_session(
         session_id=quiz_session.id,
         quiz_id=quiz.id,
         questions=[SessionQuestionResponse.model_validate(question) for question in ordered_questions],
+        already_answered_ids=[],
     )
 
 
@@ -192,9 +230,22 @@ async def submit_answer(
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> SubmitAnswerResponse:
-    """Submit and evaluate one answer inside a quiz session."""
+    """Submit and evaluate one answer inside an in-progress quiz session.
+
+    Security rules:
+    - Rejected if the session is already completed (prevents post-hoc answer changes).
+    - Idempotent: if the question was already answered, the existing answer is
+      returned as-is without modification (prevents answer overwriting / cheating).
+    """
 
     quiz_session = await get_owned_session_or_404(session_id, current_user.id, session)
+
+    if quiz_session.status == SessionStatus.COMPLETED:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Cannot submit answers to a completed session.",
+        )
+
     question = next(
         (item for item in quiz_session.quiz.questions if item.id == payload.question_id),
         None,
@@ -205,30 +256,31 @@ async def submit_answer(
             detail="Question not found in this quiz session.",
         )
 
+    # Idempotency: return the existing answer unchanged to prevent cheating.
     existing_answer = next(
         (item for item in quiz_session.answers if item.question_id == payload.question_id),
         None,
     )
-    is_correct = evaluate_answer(question, payload.user_answer)
-    ai_feedback = None
-
-    if existing_answer is None:
-        answer = UserAnswer(
-            session_id=quiz_session.id,
+    if existing_answer is not None:
+        return SubmitAnswerResponse(
+            answer_id=existing_answer.id,
             question_id=question.id,
-            user_answer=payload.user_answer,
-            is_correct=is_correct,
-            ai_feedback=ai_feedback,
-            answered_at=datetime.now(timezone.utc),
+            is_correct=existing_answer.is_correct,
+            correct_answer=question.correct_answer,
+            explanation=question.explanation,
+            ai_feedback=existing_answer.ai_feedback,
         )
-        session.add(answer)
-    else:
-        answer = existing_answer
-        answer.user_answer = payload.user_answer
-        answer.is_correct = is_correct
-        answer.ai_feedback = ai_feedback
-        answer.answered_at = datetime.now(timezone.utc)
 
+    is_correct = evaluate_answer(question, payload.user_answer)
+    answer = UserAnswer(
+        session_id=quiz_session.id,
+        question_id=question.id,
+        user_answer=payload.user_answer,
+        is_correct=is_correct,
+        ai_feedback=None,
+        answered_at=datetime.now(timezone.utc),
+    )
+    session.add(answer)
     await session.commit()
     await session.refresh(answer)
 
@@ -238,7 +290,7 @@ async def submit_answer(
         is_correct=is_correct,
         correct_answer=question.correct_answer,
         explanation=question.explanation,
-        ai_feedback=ai_feedback,
+        ai_feedback=None,
     )
 
 
@@ -248,16 +300,33 @@ async def complete_quiz_session(
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> CompleteQuizSessionResponse:
-    """Finalize a session, compute the score, and update course progress."""
+    """Finalize a session, compute the score, and update course progress.
+
+    Idempotency: if the session is already completed, the stored score is
+    returned immediately without re-incrementing progress counters.
+    """
 
     quiz_session = await get_owned_session_or_404(session_id, current_user.id, session)
+
+    # Guard against double-completion which would inflate total_sessions.
+    if quiz_session.status == SessionStatus.COMPLETED:
+        ordered_questions = sorted(quiz_session.quiz.questions, key=lambda item: item.order_index)
+        return CompleteQuizSessionResponse(
+            session_id=quiz_session.id,
+            score=quiz_session.score or 0.0,
+            total_questions=len(ordered_questions),
+            correct_answers=sum(1 for a in quiz_session.answers if a.is_correct),
+        )
+
     ordered_questions = sorted(quiz_session.quiz.questions, key=lambda item: item.order_index)
     total_questions = len(ordered_questions)
+    # Score is always based on all questions in the quiz, not only answered ones.
     correct_answers = sum(1 for answer in quiz_session.answers if answer.is_correct)
     score = (correct_answers / total_questions) if total_questions else 0.0
 
     quiz_session.completed_at = datetime.now(timezone.utc)
     quiz_session.score = score
+    quiz_session.status = SessionStatus.COMPLETED
 
     progress_query = select(CourseProgress).where(
         CourseProgress.user_id == current_user.id,
@@ -313,6 +382,7 @@ async def get_quiz_session_results(
 
         answers.append(
             ResultAnswerResponse(
+                answer_id=user_answer.id,
                 question_id=question.id,
                 content=question.content,
                 question_type=question.question_type.value,
@@ -325,8 +395,10 @@ async def get_quiz_session_results(
             )
         )
 
+    # Use the score stored at completion time as the authoritative value.
+    # Recount correct_answers from DB answers for consistency with the payload.
     total_questions = len(ordered_questions)
-    correct_answers = sum(1 for answer in answers if answer.is_correct)
+    correct_answers = sum(1 for a in quiz_session.answers if a.is_correct)
     return QuizSessionResultResponse(
         session_id=quiz_session.id,
         quiz_id=quiz_session.quiz.id,

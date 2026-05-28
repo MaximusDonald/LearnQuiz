@@ -25,11 +25,12 @@ class SessionQuestionResponse(BaseModel):
 
 
 class QuizSessionCreateResponse(BaseModel):
-    """Response returned when a quiz session starts."""
+    """Response returned when a quiz session starts or resumes."""
 
     session_id: UUID
     quiz_id: UUID
     questions: list[SessionQuestionResponse]
+    already_answered_ids: list[UUID] = Field(default_factory=list)
 
 
 class SubmitAnswerRequest(BaseModel):
@@ -62,6 +63,7 @@ class CompleteQuizSessionResponse(BaseModel):
 class ResultAnswerResponse(BaseModel):
     """Detailed answer payload shown in the results page."""
 
+    answer_id: UUID
     question_id: UUID
     content: str
     question_type: str
