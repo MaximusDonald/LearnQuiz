@@ -38,19 +38,26 @@ export function QuizQuestionView({
       <h2>{question.content}</h2>
 
       {isChoiceQuestion && question.options ? (
-        <div className={styles.options}>
-          {question.options.map((option) => (
-            <label key={option} className={styles.option}>
-              <input
-                type="radio"
-                name={question.id}
-                checked={answer === option}
-                onChange={() => setAnswer(option)}
-              />
-              <span>{option}</span>
-            </label>
-          ))}
-        </div>
+        <fieldset className={styles.fieldset}>
+          <legend className="visually-hidden">Options de réponse</legend>
+          <ul className={styles.optionsList}>
+            {question.options.map((option) => (
+              <li key={option} className={styles.optionItem}>
+                <label className={styles.optionLabel}>
+                  <input
+                    type="radio"
+                    name={question.id}
+                    value={option}
+                    checked={answer === option}
+                    onChange={() => setAnswer(option)}
+                    aria-checked={answer === option}
+                  />
+                  <span>{option}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+        </fieldset>
       ) : (
         <textarea
           className={styles.textarea}

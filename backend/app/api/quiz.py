@@ -211,12 +211,6 @@ async def submit_answer(
     )
     is_correct = evaluate_answer(question, payload.user_answer)
     ai_feedback = None
-    if not is_correct:
-        ai_feedback = await analyze_answer(
-            question=question.content,
-            correct_answer=question.correct_answer,
-            user_answer=payload.user_answer,
-        )
 
     if existing_answer is None:
         answer = UserAnswer(
@@ -229,14 +223,17 @@ async def submit_answer(
         )
         session.add(answer)
     else:
-        existing_answer.user_answer = payload.user_answer
-        existing_answer.is_correct = is_correct
-        existing_answer.ai_feedback = ai_feedback
-        existing_answer.answered_at = datetime.now(timezone.utc)
+        answer = existing_answer
+        answer.user_answer = payload.user_answer
+        answer.is_correct = is_correct
+        answer.ai_feedback = ai_feedback
+        answer.answered_at = datetime.now(timezone.utc)
 
     await session.commit()
+    await session.refresh(answer)
 
     return SubmitAnswerResponse(
+        answer_id=answer.id,
         question_id=question.id,
         is_correct=is_correct,
         correct_answer=question.correct_answer,

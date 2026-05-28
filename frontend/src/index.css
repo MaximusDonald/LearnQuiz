@@ -1,10 +1,34 @@
 :root {
-  font-family:
-    "Space Grotesk",
-    "Segoe UI",
-    sans-serif;
-  color: #1f2335;
-  background: #fffdf8;
+  /* Colors */
+  --color-bg: #fffdf8;
+  --color-surface: rgba(255, 255, 255, 0.94);
+  --color-text: #1f2335;
+  --color-text-muted: #5e6475;
+  --color-primary: #f39735;
+  --color-primary-light: rgba(243, 151, 53, 0.14);
+  --color-primary-dark: #aa5715;
+  --color-border: rgba(24, 32, 56, 0.08);
+  --color-error: #ef4444;
+  --color-error-light: #fee2e2;
+  --color-success: #10b981;
+  --color-success-light: #d1fae5;
+
+  /* Typography */
+  --font-sans: "Space Grotesk", "Segoe UI", sans-serif;
+  
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(18, 24, 39, 0.04);
+  --shadow-md: 0 18px 48px rgba(18, 24, 39, 0.08);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+  --radius-full: 999px;
+
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

@@ -8,6 +8,7 @@ from app.api.auth import router as auth_router
 from app.api.courses import router as courses_router
 from app.api.progress import router as progress_router
 from app.api.quiz import router as quiz_router
+from app.api.tutor import router as tutor_router
 from app.core.config import settings
 
 
@@ -26,6 +27,7 @@ app.include_router(auth_router)
 app.include_router(courses_router)
 app.include_router(progress_router)
 app.include_router(quiz_router)
+app.include_router(tutor_router)
 
 
 @app.get("/health")

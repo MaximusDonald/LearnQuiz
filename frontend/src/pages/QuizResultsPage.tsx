@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import { fetchQuizSessionResultsRequest } from '../services/quizSessionApi'
+import { fetchTutorFeedbackRequest } from '../services/tutorApi'
 import type { QuizSessionResult } from '../types/quizSession'
 import styles from './QuizResultsPage.module.css'
 
@@ -12,6 +13,31 @@ export function QuizResultsPage() {
   const [results, setResults] = useState<QuizSessionResult | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [fetchingFeedback, setFetchingFeedback] = useState<string | null>(null)
+
+  async function handleRequestFeedback(answerId: string) {
+    if (!answerId) return
+    setFetchingFeedback(answerId)
+    try {
+      const response = await fetchTutorFeedbackRequest(answerId)
+      setResults((prev) => {
+        if (!prev) return prev
+        return {
+          ...prev,
+          answers: prev.answers.map((ans) =>
+            ans.answer_id === answerId
+              ? { ...ans, ai_feedback: response.ai_feedback }
+              : ans
+          ),
+        }
+      })
+    } catch (err) {
+      console.error(err)
+      alert("Impossible de charger l'explication du Tuteur IA.")
+    } finally {
+      setFetchingFeedback(null)
+    }
+  }
 
   useEffect(() => {
     async function loadResults() {
@@ -47,7 +73,20 @@ export function QuizResultsPage() {
         <span className={styles.kicker}>Résultats</span>
       </section>
 
-      {isLoading ? <p className={styles.message}>Chargement des résultats...</p> : null}
+      {isLoading ? (
+        <div className={styles.layout}>
+          <section className={`${styles.summaryCard} ${styles.skeleton}`}>
+            <div className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+            <div className={`${styles.skeleton} ${styles.skeletonText}`} />
+            <div className={`${styles.skeleton} ${styles.skeletonText}`} style={{ width: '40%' }} />
+          </section>
+          <section className={styles.answersList}>
+            <div className={`${styles.skeleton} ${styles.skeletonCard}`} />
+            <div className={`${styles.skeleton} ${styles.skeletonCard}`} />
+            <div className={`${styles.skeleton} ${styles.skeletonCard}`} />
+          </section>
+        </div>
+      ) : null}
       {error ? <p className={styles.error}>{error}</p> : null}
 
       {results ? (
@@ -93,6 +132,17 @@ export function QuizResultsPage() {
                     <strong>Tuteur IA</strong>
                     <p>{answer.ai_feedback}</p>
                   </div>
+                ) : null}
+                {!answer.is_correct && !answer.ai_feedback && answer.answer_id ? (
+                  <button
+                    className={styles.tutorButton}
+                    onClick={() => void handleRequestFeedback(answer.answer_id!)}
+                    disabled={fetchingFeedback === answer.answer_id}
+                  >
+                    {fetchingFeedback === answer.answer_id
+                      ? 'Réflexion en cours...'
+                      : 'Demander une explication au Tuteur IA'}
+                  </button>
                 ) : null}
               </article>
             ))}

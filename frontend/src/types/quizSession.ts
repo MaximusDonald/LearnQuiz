@@ -13,6 +13,7 @@ export interface QuizSessionCreateResponse {
 }
 
 export interface SubmitAnswerResponse {
+  answer_id: string
   question_id: string
   is_correct: boolean
   correct_answer: string
@@ -28,6 +29,7 @@ export interface CompleteQuizSessionResponse {
 }
 
 export interface ResultAnswer {
+  answer_id?: string
   question_id: string
   content: string
   question_type: string

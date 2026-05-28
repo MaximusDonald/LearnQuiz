@@ -42,6 +42,7 @@ class SubmitAnswerRequest(BaseModel):
 class SubmitAnswerResponse(BaseModel):
     """Evaluation result for one submitted answer."""
 
+    answer_id: UUID
     question_id: UUID
     is_correct: bool
     correct_answer: str

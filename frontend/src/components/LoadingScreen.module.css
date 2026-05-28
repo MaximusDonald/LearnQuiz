@@ -11,19 +11,19 @@
 .card {
   width: min(100%, 580px);
   padding: 32px;
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(24, 32, 56, 0.08);
-  box-shadow: 0 18px 48px rgba(18, 24, 39, 0.08);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
   text-align: center;
 }
 
 .kicker {
   display: inline-flex;
   padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  background: rgba(243, 151, 53, 0.14);
-  color: #aa5715;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
   font-size: 0.76rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -39,6 +39,29 @@
 
 .card p {
   margin: 0;
-  color: #5e6475;
+  color: var(--color-text-muted);
   line-height: 1.7;
+}
+
+.spinner {
+  margin: 20px auto 0;
+  width: 48px;
+  height: 48px;
+  animation: spin 1.2s linear infinite;
+  color: var(--color-primary);
+}
+
+.spinner circle {
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  fill: none;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }

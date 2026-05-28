@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios'
 import { useEffect, useState } from 'react'
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import { CourseChat } from '../components/CourseChat'
