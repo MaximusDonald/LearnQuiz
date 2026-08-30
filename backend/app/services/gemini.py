@@ -34,19 +34,19 @@ logger = logging.getLogger(__name__)
 
 MAX_TEXT_LENGTH = 800_000
 SUMMARY_MODELS = [
-    "models/gemini-2.5-flash",
+    "models/gemini-3.5-flash",
     "models/gemma-4-31b-it",
     "models/gemma-4-26b-a4b-it",
 ]
 QUIZ_MODELS = [
-    "models/gemini-2.5-flash",
+    "models/gemini-3.5-flash",
     "models/gemma-4-31b-it",
     "models/gemma-4-26b-a4b-it",
 ]
 FAST_MODELS = [
-    "models/gemini-2.5-flash",
-    "models/gemini-2.0-flash",
-    "models/gemini-2.0-flash-lite",
+    "models/gemini-3.5-flash",
+    "models/gemini-3-flash",
+    "models/gemini-3.5-flash-lite",
 ]
 
 genai_client = google_genai.Client(api_key=settings.GEMINI_API_KEY) if google_genai and settings.GEMINI_API_KEY else None
