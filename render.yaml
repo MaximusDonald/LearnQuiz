@@ -13,7 +13,6 @@ services:
           property: connectionString
       - key: FRONTEND_URL
         value: "https://learnquiz-frontend.onrender.com"
-        sync: false
       - key: GEMINI_API_KEY
         sync: false
       - key: GOOGLE_CLIENT_ID
@@ -37,7 +36,6 @@ services:
     envVars:
       - key: VITE_API_BASE_URL
         value: "https://learnquiz-backend.onrender.com"
-        sync: false
     routes:
       - type: rewrite
         source: /*
