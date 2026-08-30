@@ -1,6 +1,8 @@
 import { AxiosError } from 'axios'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 import { fetchQuizSessionResultsRequest } from '../services/quizSessionApi'
 import { fetchTutorFeedbackRequest } from '../services/tutorApi'
@@ -130,7 +132,7 @@ export function QuizResultsPage() {
                 {!answer.is_correct && answer.ai_feedback ? (
                   <div className={styles.feedbackBox}>
                     <strong>Tuteur IA</strong>
-                    <p>{answer.ai_feedback}</p>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{answer.ai_feedback}</ReactMarkdown>
                   </div>
                 ) : null}
                 {!answer.is_correct && !answer.ai_feedback && answer.answer_id ? (

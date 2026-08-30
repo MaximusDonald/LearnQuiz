@@ -59,6 +59,9 @@ Cours :
 Tu es un tuteur bienveillant. L'étudiant a répondu de manière INCORRECTE à la question suivante.
 Analyse sa réponse par rapport à la bonne réponse, explique-lui clairement et de façon pédagogique pourquoi sa réponse est fausse, et guide-le avec bienveillance vers la compréhension du concept.
 
+Contraintes :
+- Formate ta réponse en Markdown clair (utilise du gras, des listes, ou des sauts de ligne pour aérer le texte).
+
 Question :
 {question}
 
@@ -77,6 +80,7 @@ Contraintes :
 - Si l'information manque, dis-le clairement.
 - N'invente jamais d'information hors du cours.
 - Sois pédagogique, clair et concis.
+- Formate ta réponse en Markdown clair (utilise du gras, des listes, etc.).
 
 Historique :
 {history}

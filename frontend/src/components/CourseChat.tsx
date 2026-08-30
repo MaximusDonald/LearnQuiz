@@ -1,6 +1,8 @@
 import { AxiosError } from 'axios'
 import { useState } from 'react'
 import type { KeyboardEvent } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 import { sendCourseMessageRequest } from '../services/courseApi'
 import type { CourseMessage } from '../types/course'
@@ -77,7 +79,7 @@ export function CourseChat({
               <span className={styles.messageRole}>
                 {message.role === 'user' ? 'Toi' : 'Professeur IA'}
               </span>
-              <p>{message.content}</p>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
             </article>
           ))
         )}
