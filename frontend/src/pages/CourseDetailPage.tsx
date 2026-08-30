@@ -81,7 +81,7 @@ export function CourseDetailPage() {
   }, [courseId])
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout | null = null
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
 
     if (course?.status === 'processing' && courseId) {
       timeoutId = setTimeout(async () => {

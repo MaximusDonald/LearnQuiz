@@ -45,7 +45,7 @@ export function CoursesPage() {
   }, [])
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout | null = null
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
 
     const hasProcessing = courses.some((c) => c.status === 'processing')
     if (hasProcessing) {
