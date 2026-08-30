@@ -112,9 +112,8 @@ def normalize_answer(answer: str) -> str:
     return answer.strip().casefold()
 
 
-def extract_weak_topics_from_answers(answers: list[UserAnswer]) -> list[str]:
-    """Extract simple weak-topic keywords from incorrect answers' questions."""
-
+def extract_weak_topics_fallback(answers: list[UserAnswer]) -> list[str]:
+    """Extract simple weak-topic keywords from incorrect answers' questions using regex (fallback)."""
     tokens: list[str] = []
     for answer in answers:
         if answer.is_correct or answer.question is None:
@@ -127,6 +126,29 @@ def extract_weak_topics_from_answers(answers: list[UserAnswer]) -> list[str]:
         counts[token] = counts.get(token, 0) + 1
     sorted_topics = sorted(counts.items(), key=lambda item: (-item[1], item[0]))
     return [topic for topic, _count in sorted_topics[:8]]
+
+
+async def extract_weak_topics_from_answers(answers: list[UserAnswer]) -> list[str]:
+    """Extract weak-topic concepts from incorrect answers' questions using Gemini with regex fallback."""
+    incorrect_questions = [
+        answer.question.content
+        for answer in answers
+        if not answer.is_correct and answer.question is not None
+    ]
+
+    if not incorrect_questions:
+        return []
+
+    try:
+        from app.services.gemini import extract_weak_topics_with_gemini
+        topics = await extract_weak_topics_with_gemini(incorrect_questions)
+        if topics:
+            return topics
+    except Exception:
+        pass
+
+    return extract_weak_topics_fallback(answers)
+
 
 
 def merge_weak_topics(
@@ -334,7 +356,7 @@ async def complete_quiz_session(
     )
     progress_result = await session.execute(progress_query)
     course_progress = progress_result.scalar_one_or_none()
-    weak_topics = extract_weak_topics_from_answers(quiz_session.answers)
+    weak_topics = await extract_weak_topics_from_answers(quiz_session.answers)
 
     if course_progress is None:
         course_progress = CourseProgress(

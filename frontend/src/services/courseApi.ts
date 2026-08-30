@@ -45,12 +45,16 @@ export async function deleteCourseRequest(courseId: string): Promise<void> {
 export async function generateCourseAssetsRequest(
   courseId: string,
   difficulty: 'easy' | 'medium' | 'hard' = 'medium',
+  nQuestions: number = 5,
 ): Promise<CourseGenerationResponse> {
   const response = await apiClient.post<CourseGenerationResponse>(
     `/api/courses/${courseId}/generate`,
     undefined,
     {
-      params: { difficulty },
+      params: { 
+        difficulty,
+        n_questions: nQuestions,
+      },
     },
   )
   return response.data

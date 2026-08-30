@@ -289,3 +289,29 @@ async def answer_question(
         question=question,
     )
     return await generate_text_response(model_name=FAST_MODELS, prompt=prompt)
+
+
+async def extract_weak_topics_with_gemini(questions: list[str]) -> list[str]:
+    """Extract weak topic concepts from a list of failed questions using Gemini."""
+    if not questions:
+        return []
+
+    questions_text = "\n".join(f"- {q}" for q in questions)
+    prompt = PROMPTS["extract_weak_topics"].format(questions=questions_text)
+
+    try:
+        raw_response = await generate_text_response(
+            model_name=FAST_MODELS,
+            prompt=prompt,
+            expect_json=True,
+        )
+        payload = parse_json_response(raw_response)
+        if isinstance(payload, list):
+            return [str(item).strip()[:100] for item in payload if item]
+        elif isinstance(payload, dict) and "topics" in payload:
+            return [str(item).strip()[:100] for item in payload["topics"] if item]
+    except Exception as exc:
+        logger.exception("Failed to extract weak topics with Gemini: %s", exc)
+
+    return []
+

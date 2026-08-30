@@ -56,15 +56,16 @@ Cours :
 {text}
 """.strip(),
     "answer_analysis": """
-Tu es un tuteur bienveillant. Analyse la réponse d'un étudiant et donne un feedback bref, encourageant et concret.
+Tu es un tuteur bienveillant. L'étudiant a répondu de manière INCORRECTE à la question suivante.
+Analyse sa réponse par rapport à la bonne réponse, explique-lui clairement et de façon pédagogique pourquoi sa réponse est fausse, et guide-le avec bienveillance vers la compréhension du concept.
 
 Question :
 {question}
 
-Bonne réponse :
+Bonne réponse attendue :
 {correct_answer}
 
-Réponse de l'étudiant :
+Réponse incorrecte de l'étudiant :
 {user_answer}
 """.strip(),
     "course_qa": """
@@ -86,4 +87,18 @@ Cours :
 Question :
 {question}
 """.strip(),
+    "extract_weak_topics": """
+Tu es un expert en pédagogie. Analyse les questions suivantes auxquelles un étudiant a répondu de manière incorrecte dans un quiz.
+Identifie et extrais entre 1 et 5 concepts clés ou sujets académiques précis (par exemple : "Photosynthèse", "Équations du second degré", "Révolution industrielle", etc.) que l'étudiant doit retravailler.
+
+Contraintes :
+- Réponds en français.
+- Retourne uniquement une liste au format JSON, par exemple : ["Sujet A", "Sujet B"]
+- Ne retourne aucun texte hors JSON.
+- Les concepts doivent être courts, pertinents et précis (1 à 4 mots maximum par concept).
+
+Questions échouées :
+{questions}
+""".strip(),
 }
+

@@ -66,6 +66,45 @@
   margin-top: 24px;
 }
 
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 24px;
+  align-items: flex-end;
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.controlGroup label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #5e6475;
+}
+
+.select {
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(24, 32, 56, 0.12);
+  background: #ffffff;
+  color: #1f2335;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  min-width: 140px;
+  transition: border-color 0.2s ease;
+}
+
+.select:focus {
+  border-color: #ff9248;
+}
+
+
 .generateButton {
   border: none;
   border-radius: 16px;

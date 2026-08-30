@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { QuizQuestionView } from '../components/QuizQuestionView'
@@ -22,6 +22,8 @@ export function QuizPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isResumed, setIsResumed] = useState(false)
+
+  const pendingSubmissionsRef = useRef<Record<string, Promise<any>>>({})
 
   useEffect(() => {
     async function startQuizSession() {
@@ -79,28 +81,39 @@ export function QuizPage() {
       return
     }
 
-    setIsSubmitting(true)
-    setError(null)
+    const questionId = currentQuestion.id
+    // Launch the submit request in the background
+    const promise = submitQuizAnswerRequest(sessionId, questionId, answer).catch((err) => {
+      console.error(`Failed to submit answer for question ${questionId}:`, err)
+      throw err
+    })
 
-    try {
-      await submitQuizAnswerRequest(sessionId, currentQuestion.id, answer)
+    pendingSubmissionsRef.current[questionId] = promise
 
-      if (currentIndex === questions.length - 1) {
+    if (currentIndex === questions.length - 1) {
+      setIsSubmitting(true)
+      setError(null)
+
+      try {
+        // Wait for all background submissions to complete
+        await Promise.all(Object.values(pendingSubmissionsRef.current))
         await completeQuizSessionRequest(sessionId)
         navigate(`/quiz/${sessionId}/results`, { replace: true })
-      } else {
-        setCurrentIndex((index) => index + 1)
+      } catch (err) {
+        const axiosError = err as AxiosError<{ detail?: string }>
+        setError(
+          axiosError.response?.data?.detail ??
+            "Impossible d'enregistrer toutes les réponses. Veuillez réessayer.",
+        )
+      } finally {
+        setIsSubmitting(false)
       }
-    } catch (err) {
-      const axiosError = err as AxiosError<{ detail?: string }>
-      setError(
-        axiosError.response?.data?.detail ??
-          "Impossible d'enregistrer cette réponse",
-      )
-    } finally {
-      setIsSubmitting(false)
+    } else {
+      // Transition immediately to the next question
+      setCurrentIndex((index) => index + 1)
     }
   }
+
 
   return (
     <main className={styles.page}>

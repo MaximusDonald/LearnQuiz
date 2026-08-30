@@ -90,6 +90,8 @@ export function CourseDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium')
+  const [nQuestions, setNQuestions] = useState<number>(5)
 
   useEffect(() => {
     async function loadCourse() {
@@ -142,7 +144,7 @@ export function CourseDetailPage() {
     setIsGenerating(true)
 
     try {
-      const response = await generateCourseAssetsRequest(courseId, 'medium')
+      const response = await generateCourseAssetsRequest(courseId, difficulty, nQuestions)
       setSummary(response.summary)
       setQuizzes((currentQuizzes) => [response.quiz, ...currentQuizzes])
     } catch (err) {
@@ -185,7 +187,38 @@ export function CourseDetailPage() {
               <span>Cree le {new Date(course.created_at).toLocaleString()}</span>
             </div>
 
-            <div className={styles.actions}>
+            <div className={styles.controls}>
+              <div className={styles.controlGroup}>
+                <label htmlFor="quiz-difficulty">Difficulté</label>
+                <select
+                  id="quiz-difficulty"
+                  className={styles.select}
+                  value={difficulty}
+                  onChange={(e) => setDifficulty(e.target.value as 'easy' | 'medium' | 'hard')}
+                  disabled={isGenerating}
+                >
+                  <option value="easy">Facile</option>
+                  <option value="medium">Moyen</option>
+                  <option value="hard">Difficile</option>
+                </select>
+              </div>
+
+              <div className={styles.controlGroup}>
+                <label htmlFor="quiz-questions">Questions</label>
+                <select
+                  id="quiz-questions"
+                  className={styles.select}
+                  value={nQuestions}
+                  onChange={(e) => setNQuestions(Number(e.target.value))}
+                  disabled={isGenerating}
+                >
+                  <option value={5}>5 questions</option>
+                  <option value={10}>10 questions</option>
+                  <option value={15}>15 questions</option>
+                  <option value={20}>20 questions</option>
+                </select>
+              </div>
+
               <button
                 className={styles.generateButton}
                 type="button"
