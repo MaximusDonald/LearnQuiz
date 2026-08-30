@@ -102,6 +102,9 @@ async def create_course(
     await session.commit()
     await session.refresh(course)
 
+    # Capture the id now, before any potential rollback that would expire the object.
+    course_id = course.id
+
     try:
         extracted_text = extract_course_text(file_bytes, file_type)
         course.raw_text = extracted_text
@@ -111,12 +114,14 @@ async def create_course(
     except Exception:
         await session.rollback()
 
-        persisted_course = await get_owned_course_or_404(course.id, current_user.id, session)
+        # Use the pre-captured id — do NOT access course.id here, the object is expired.
+        persisted_course = await get_owned_course_or_404(course_id, current_user.id, session)
         persisted_course.status = CourseStatus.ERROR
         await session.commit()
         raise
 
     return CourseResponse.model_validate(course)
+
 
 
 @router.get("", response_model=list[CourseListItemResponse])
