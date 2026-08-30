@@ -1,6 +1,5 @@
 import { AxiosError } from 'axios'
 import { useEffect, useState } from 'react'
-import type { ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import { CourseChat } from '../components/CourseChat'
@@ -103,10 +102,6 @@ export function CourseDetailPage() {
       setIsGenerating(false)
     }
   }
-
-  // Constantes pour définir le seuil (en caractères) à partir duquel on ajoute le bouton
-  const MAX_SUMMARY_LENGTH = 400
-  const MAX_TEXT_LENGTH = 400
 
   return (
     <main className={styles.page}>
