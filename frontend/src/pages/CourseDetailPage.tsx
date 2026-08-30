@@ -80,6 +80,48 @@ export function CourseDetailPage() {
     void loadCourse()
   }, [courseId])
 
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null
+
+    if (course?.status === 'processing' && courseId) {
+      timeoutId = setTimeout(async () => {
+        try {
+          const courseResponse = await fetchCourseDetailRequest(courseId)
+          if (courseResponse.status === 'ready') {
+            const [
+              messagesResponse,
+              summaryResponse,
+              quizzesResponse,
+              progressResponse,
+              relationsResponse,
+            ] = await Promise.all([
+              fetchCourseMessagesRequest(courseId),
+              fetchCourseSummaryRequest(courseId),
+              fetchCourseQuizzesRequest(courseId),
+              fetchCourseProgressRequest(courseId),
+              fetchCourseRelationsRequest(courseId),
+            ])
+
+            setCourse(courseResponse)
+            setMessages(messagesResponse)
+            setSummary(summaryResponse.summary)
+            setQuizzes(quizzesResponse)
+            setProgress(progressResponse)
+            setRelations(relationsResponse)
+          } else {
+            setCourse(courseResponse)
+          }
+        } catch (err) {
+          console.error('Erreur lors du rafraîchissement du cours.', err)
+        }
+      }, 3000)
+    }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId)
+    }
+  }, [course, courseId])
+
   async function handleGenerateQuiz() {
     if (!courseId) {
       return
@@ -210,7 +252,9 @@ export function CourseDetailPage() {
 
             <section className={styles.summaryPanel}>
               <h2>Resume</h2>
-              {summary ? (
+              {course.status === 'processing' ? (
+                <p className={styles.placeholder}>Extraction et analyse en cours...</p>
+              ) : summary ? (
                 <div className={styles.scrollableContainer}>
                   <MarkdownContent markdown={summary} />
                 </div>
@@ -221,7 +265,9 @@ export function CourseDetailPage() {
 
             <section className={styles.textPanel}>
               <h2>Texte extrait</h2>
-              {course.raw_text ? (
+              {course.status === 'processing' ? (
+                <p className={styles.placeholder}>Extraction en cours...</p>
+              ) : course.raw_text ? (
                 <div className={styles.scrollableContainer}>
                   <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0 }}>
                     {course.raw_text}

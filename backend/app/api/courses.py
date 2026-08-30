@@ -1,16 +1,18 @@
 """Course management API routes."""
 
+import asyncio
+import logging
 from pathlib import Path
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, Query, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.core.database import get_db
+from app.core.database import AsyncSessionLocal, get_db
 from app.core.security import get_current_user
-from app.models.course import Course, CourseStatus
+from app.models.course import Course, CourseFileType, CourseStatus
 from app.models.course import CourseRelation, CourseRelationType
 from app.models.progress import CourseMessage, CourseMessageRole
 from app.models.quiz import Question, QuestionType, Quiz, QuizDifficulty
@@ -35,6 +37,38 @@ from app.services.parser import (
 
 
 router = APIRouter(prefix="/api/courses", tags=["courses"])
+logger = logging.getLogger(__name__)
+
+
+async def _process_course_extraction(
+    course_id: UUID,
+    user_id: UUID,
+    file_bytes: bytes,
+    file_type: CourseFileType,
+) -> None:
+    """Run text extraction in the background and update the course status."""
+
+    async with AsyncSessionLocal() as session:
+        try:
+            # We must use asyncio.to_thread because extract_course_text is synchronous and CPU-bound
+            extracted_text = await asyncio.to_thread(extract_course_text, file_bytes, file_type)
+
+            query = select(Course).where(Course.id == course_id, Course.user_id == user_id)
+            course = (await session.execute(query)).scalar_one_or_none()
+
+            if course:
+                course.raw_text = extracted_text
+                course.status = CourseStatus.READY
+                await session.commit()
+
+        except Exception as exc:
+            logger.exception("Background extraction failed for course %s: %s", course_id, exc)
+            await session.rollback()
+            query = select(Course).where(Course.id == course_id, Course.user_id == user_id)
+            course = (await session.execute(query)).scalar_one_or_none()
+            if course:
+                course.status = CourseStatus.ERROR
+                await session.commit()
 
 
 async def get_owned_course_or_404(
@@ -79,11 +113,12 @@ async def get_owned_course_with_quizzes_or_404(
 
 @router.post("", response_model=CourseResponse, status_code=status.HTTP_201_CREATED)
 async def create_course(
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> CourseResponse:
-    """Upload a course file, extract its text, and store it in the database."""
+    """Upload a course file, enqueue extraction, and return immediately."""
 
     file_bytes = await file.read()
     validate_file_size(len(file_bytes))
@@ -102,23 +137,13 @@ async def create_course(
     await session.commit()
     await session.refresh(course)
 
-    # Capture the id now, before any potential rollback that would expire the object.
-    course_id = course.id
-
-    try:
-        extracted_text = extract_course_text(file_bytes, file_type)
-        course.raw_text = extracted_text
-        course.status = CourseStatus.READY
-        await session.commit()
-        await session.refresh(course)
-    except Exception:
-        await session.rollback()
-
-        # Use the pre-captured id — do NOT access course.id here, the object is expired.
-        persisted_course = await get_owned_course_or_404(course_id, current_user.id, session)
-        persisted_course.status = CourseStatus.ERROR
-        await session.commit()
-        raise
+    background_tasks.add_task(
+        _process_course_extraction,
+        course.id,
+        current_user.id,
+        file_bytes,
+        file_type,
+    )
 
     return CourseResponse.model_validate(course)
 

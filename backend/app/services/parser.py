@@ -50,11 +50,17 @@ def validate_file_size(file_size: int) -> None:
 
 
 def extract_pdf_text(file_bytes: bytes) -> str:
-    """Extract text from a PDF using PyMuPDF."""
+    """Extract text from a PDF using PyMuPDF while preserving reading order blocks."""
 
     with fitz.open(stream=BytesIO(file_bytes), filetype="pdf") as document:
-        pages = [page.get_text("text") for page in document]
-    return normalize_extracted_text("\n".join(pages))
+        all_pages_text = []
+        for page in document:
+            blocks = page.get_text("blocks")
+            # PyMuPDF blocks tuples contain the text at index 4
+            page_text = "\n".join(b[4] for b in blocks if b[4].strip())
+            all_pages_text.append(page_text)
+
+    return normalize_extracted_text("\n\n".join(all_pages_text))
 
 
 def extract_text_file(file_bytes: bytes) -> str:

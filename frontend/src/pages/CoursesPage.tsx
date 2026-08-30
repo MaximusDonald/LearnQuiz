@@ -44,6 +44,26 @@ export function CoursesPage() {
     void loadCourses()
   }, [])
 
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null
+
+    const hasProcessing = courses.some((c) => c.status === 'processing')
+    if (hasProcessing) {
+      timeoutId = setTimeout(async () => {
+        try {
+          const response = await fetchCoursesRequest()
+          setCourses(response)
+        } catch (err) {
+          console.error('Erreur lors du rafraîchissement des cours.', err)
+        }
+      }, 3000)
+    }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId)
+    }
+  }, [courses])
+
   async function handleUpload(file: File) {
     setError(null)
     setIsUploading(true)
