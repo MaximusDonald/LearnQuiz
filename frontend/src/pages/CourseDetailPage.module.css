@@ -289,3 +289,32 @@
     grid-template-columns: 1fr;
   }
 }
+
+.scrollableContainer {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(24, 32, 56, 0.08);
+  background: #fdfdfd;
+  padding: 16px;
+}
+
+.textPanel .scrollableContainer {
+  background: #151926; /* Dark background for raw text */
+  padding: 0; /* padding is handled by the pre tag inside */
+}
+
+.scrollableContainer::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollableContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollableContainer::-webkit-scrollbar-thumb {
+  background: rgba(24, 32, 56, 0.2);
+  border-radius: 10px;
+}
+.scrollableContainer::-webkit-scrollbar-thumb:hover {
+  background: rgba(24, 32, 56, 0.3);
+}

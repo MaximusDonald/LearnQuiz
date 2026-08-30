@@ -23,61 +23,7 @@ import type {
 } from '../types/course'
 import styles from './CourseDetailPage.module.css'
 
-// --- UX/UI: Wrapper réutilisable pour le contenu extensible ---
-interface ExpandableWrapperProps {
-  children: ReactNode;
-  contentLength: number;
-  maxLength: number;
-  maxHeight?: string;
-}
 
-function ExpandableWrapper({ children, contentLength, maxLength, maxHeight = '180px' }: ExpandableWrapperProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const isLongContent = contentLength > maxLength;
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-      <div
-        style={{
-          maxHeight: isExpanded || !isLongContent ? 'none' : maxHeight,
-          overflow: 'hidden',
-          transition: 'max-height 0.3s ease',
-          // Crée un effet de fondu transparent vers le bas quand c'est réduit
-          WebkitMaskImage: !isExpanded && isLongContent 
-            ? 'linear-gradient(to bottom, black 60%, transparent 100%)' 
-            : 'none',
-          maskImage: !isExpanded && isLongContent 
-            ? 'linear-gradient(to bottom, black 60%, transparent 100%)' 
-            : 'none',
-        }}
-      >
-        {children}
-      </div>
-      
-      {isLongContent && (
-        <button
-          type="button"
-          onClick={() => setIsExpanded(!isExpanded)}
-          style={{
-            alignSelf: 'flex-start',
-            background: 'none',
-            border: 'none',
-            color: 'var(--primary-color, #007bff)',
-            cursor: 'pointer',
-            fontWeight: '600',
-            fontSize: '0.9rem',
-            padding: '0.25rem 0',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.25rem'
-          }}
-        >
-          {isExpanded ? 'Voir moins ▲' : 'Voir plus ▼'}
-        </button>
-      )}
-    </div>
-  );
-}
 
 export function CourseDetailPage() {
   const { courseId } = useParams()
@@ -270,13 +216,9 @@ export function CourseDetailPage() {
             <section className={styles.summaryPanel}>
               <h2>Resume</h2>
               {summary ? (
-                <ExpandableWrapper 
-                  contentLength={summary.length} 
-                  maxLength={MAX_SUMMARY_LENGTH}
-                  maxHeight="150px"
-                >
+                <div className={styles.scrollableContainer}>
                   <MarkdownContent markdown={summary} />
-                </ExpandableWrapper>
+                </div>
               ) : (
                 <p className={styles.placeholder}>Aucun resume genere pour le moment.</p>
               )}
@@ -285,15 +227,11 @@ export function CourseDetailPage() {
             <section className={styles.textPanel}>
               <h2>Texte extrait</h2>
               {course.raw_text ? (
-                <ExpandableWrapper 
-                  contentLength={course.raw_text.length} 
-                  maxLength={MAX_TEXT_LENGTH}
-                  maxHeight="200px"
-                >
+                <div className={styles.scrollableContainer}>
                   <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0 }}>
                     {course.raw_text}
                   </pre>
-                </ExpandableWrapper>
+                </div>
               ) : (
                 <p className={styles.placeholder}>Aucun texte extrait disponible.</p>
               )}
