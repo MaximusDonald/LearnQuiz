@@ -16,4 +16,3 @@ authlib
 httpx
 pymupdf
 itsdangerous
-pypdf
